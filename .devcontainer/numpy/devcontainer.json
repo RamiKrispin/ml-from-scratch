@@ -1,0 +1,25 @@
+{
+  "$schema": "https://aka.ms/dev-container.schema.json",
+  "name": "ML from Scratch — NumPy",
+  "dockerComposeFile": "../../compose.yaml",
+  "service": "numpy",
+  "runServices": ["numpy"],
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "remoteUser": "vscode",
+  "remoteEnv": {
+    "PATH": "/opt/numpy/.venv/bin:${containerEnv:PATH}"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/opt/numpy/.venv/bin/python",
+        "python.terminal.activateEnvironment": false
+      }
+    }
+  }
+}

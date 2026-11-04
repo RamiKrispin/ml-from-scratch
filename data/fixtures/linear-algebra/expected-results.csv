@@ -1,0 +1,12 @@
+name,value
+first_row_dot,-1.5
+coefficient_norm,1.118033988749895
+prediction_1,-1.5
+prediction_2,-2.5
+prediction_3,-3.5
+gram_11,35.0
+gram_12,44.0
+gram_21,44.0
+gram_22,56.0
+solution_1,2.0
+solution_2,3.0

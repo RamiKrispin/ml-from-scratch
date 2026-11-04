@@ -1,0 +1,10 @@
+Type: Project
+Title: Machine Learning from Scratch R Environment
+Version: 0.0.0
+Description: Project-local dependencies for the base R tutorial track.
+Depends: R (>= 4.4)
+Imports:
+    fs (== 1.6.6),
+    ggplot2 (>= 4.0.3),
+    knitr (>= 1.51),
+    rmarkdown (>= 2.30)

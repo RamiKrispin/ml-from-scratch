@@ -1,0 +1,22 @@
+{
+  "$schema": "https://aka.ms/dev-container.schema.json",
+  "name": "ML from Scratch — Base R",
+  "dockerComposeFile": "../../compose.yaml",
+  "service": "r",
+  "runServices": ["r"],
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "remoteUser": "docker",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "REditorSupport.r",
+        "quarto.quarto"
+      ],
+      "settings": {
+        "r.rterm.linux": "/usr/local/bin/R",
+        "r.alwaysUseActiveTerminal": true
+      }
+    }
+  }
+}

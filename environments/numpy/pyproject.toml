@@ -1,0 +1,16 @@
+[project]
+name = "ml-from-scratch-numpy"
+version = "0.0.0"
+description = "NumPy runtime for the Machine Learning from Scratch tutorials"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "ipykernel>=7.4,<8",
+    "jupyterlab>=4.5,<5",
+    "nbconvert>=7.16,<8",
+    "numpy>=2.4,<2.5",
+    "pandas>=2.3,<3",
+    "plotnine>=0.15,<0.16",
+]
+
+[tool.uv]
+package = false

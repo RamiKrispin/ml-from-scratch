@@ -1,0 +1,32 @@
+name: ml-from-scratch
+
+services:
+  numpy:
+    build:
+      context: .
+      dockerfile: environments/numpy/Dockerfile
+    init: true
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    command: sleep infinity
+
+  mlx:
+    build:
+      context: .
+      dockerfile: environments/mlx/Dockerfile
+    init: true
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    command: sleep infinity
+
+  r:
+    build:
+      context: .
+      dockerfile: environments/r/Dockerfile
+    init: true
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    command: sleep infinity

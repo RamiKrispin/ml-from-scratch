@@ -1,0 +1,145 @@
+---
+title: "Vectors, Matrices, and Linear Algebra with base R"
+format:
+  html:
+    toc: true
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+---
+
+This notebook uses one small feature matrix to make shapes and core
+linear-algebra operations visible. Run the cells from top to bottom.
+
+## Load the shared fixture
+
+The helper keeps file loading and plot construction out of the learning flow.
+Every numerical operation below uses base R directly; ggplot2 is used only for
+the diagram.
+
+```{r}
+#| label: setup
+suppressPackageStartupMessages(library(ggplot2))
+source("r_helpers.R")
+
+tables <- load_fixture_tables()
+feature_names <- names(tables$features)[-1]
+coefficient_names <- as.character(tables$coefficients$feature)
+stopifnot(identical(coefficient_names, feature_names))
+
+X <- as.matrix(tables$features[, feature_names, drop = FALSE])
+storage.mode(X) <- "double"
+beta <- as.double(tables$coefficients$coefficient)
+A <- as.matrix(tables$system[, c("a1", "a2"), drop = FALSE])
+storage.mode(A) <- "double"
+b <- as.double(tables$system$b)
+expected <- setNames(
+  as.double(tables$expected$value),
+  tables$expected$name
+)
+```
+
+## Inspect shapes
+
+`X` has three observations and two features. `beta` has one coefficient for
+each feature, so `X %*% beta` is valid.
+
+```{r}
+cat("feature order:", paste(feature_names, collapse = ", "), "\n")
+cat("X: shape =", paste(dim(X), collapse = " x "), ", type =", typeof(X), "\n")
+cat("beta: length =", length(beta), ", type =", typeof(beta), "\n")
+cat("t(X): shape =", paste(dim(t(X)), collapse = " x "), "\n")
+
+X
+beta
+```
+
+## Multiply a matrix by a vector
+
+The matching inner dimensions disappear. The outer dimension—three
+observations—determines the three prediction values.
+
+```{r}
+#| label: fig-matrix-multiplication
+#| fig-cap: "The two inner dimensions match, so each observation receives one dot-product result."
+#| fig-alt: "A three-by-two feature matrix multiplied by a two-value coefficient vector produces three predictions; every cell and dimension is labeled."
+#| fig-width: 10
+#| fig-height: 5
+predictions <- drop(X %*% beta)
+matrix_multiplication_plot(X, beta, predictions)
+```
+
+## Compute the core operations
+
+A dot product produces one number, a norm measures vector length, and
+`crossprod(X)` compares every feature with every feature. The final expression
+solves a separate two-equation system.
+
+```{r}
+first_row_dot <- drop(X[1, ] %*% beta)
+coefficient_norm <- sqrt(sum(beta^2))
+gram_matrix <- crossprod(X)
+system_solution <- solve(A, b)
+
+cat("first row dot beta:", first_row_dot, "\n")
+cat("beta norm:", sprintf("%.12f", coefficient_norm), "\n")
+cat("predictions:", paste(predictions, collapse = ", "), "\n")
+gram_matrix
+cat("linear-system solution:", paste(system_solution, collapse = ", "), "\n")
+```
+
+Check the results against the same reference values used by the Python
+notebooks.
+
+```{r}
+expected_predictions <- expected[paste0("prediction_", 1:3)]
+expected_gram <- matrix(
+  expected[c("gram_11", "gram_21", "gram_12", "gram_22")],
+  nrow = 2,
+  ncol = 2
+)
+expected_solution <- expected[c("solution_1", "solution_2")]
+
+assert_close(first_row_dot, expected[["first_row_dot"]], "first-row dot product")
+assert_close(coefficient_norm, expected[["coefficient_norm"]], "coefficient norm")
+assert_close(predictions, expected_predictions, "predictions")
+assert_close(gram_matrix, expected_gram, "Gram matrix")
+assert_close(system_solution, expected_solution, "linear-system solution")
+cat("The base R results match the shared reference.\n")
+```
+
+## Recycling and shape errors
+
+Base R recycles a vector down a matrix's column-major storage. That is not the
+same as adding one value to each feature column, so `sweep()` makes the intended
+operation explicit. Matrix multiplication is stricter: a length-three
+coefficient vector is incompatible with the two columns of `X`.
+
+```{r}
+recycled_sum <- X + beta
+columnwise_sum <- sweep(X, MARGIN = 2, STATS = beta, FUN = "+")
+expected_columnwise_sum <- matrix(
+  c(1.5, 3.5, 5.5, 1.0, 3.0, 5.0),
+  nrow = 3,
+  ncol = 2
+)
+assert_close(columnwise_sum, expected_columnwise_sum, "explicit column addition")
+
+recycled_sum
+columnwise_sum
+```
+
+```{r}
+invalid_shape_message <- tryCatch(
+  {
+    X %*% c(beta, 2.0)
+    ""
+  },
+  error = conditionMessage
+)
+
+stopifnot(nzchar(invalid_shape_message))
+cat("Expected incompatible-shape error:", invalid_shape_message, "\n")
+cat("All T02 base R checks passed.\n")
+```
