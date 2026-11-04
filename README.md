@@ -1,5 +1,7 @@
 # Machine Learning from Scratch
 
+![Machine Learning from Scratch, illustrated with a numerical matrix, a fitted regression line, loss contours, and a neural network.](assets/hero.png)
+
 This repository contains the runnable companion code for the Machine Learning
 from Scratch tutorial series. Each coding tutorial provides equivalent tracks
 for NumPy, MLX, and base R while sharing the same frozen inputs and expected
